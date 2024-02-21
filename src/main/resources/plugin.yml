@@ -1,0 +1,6 @@
+name: MakotoRandomItemEvent
+version: '${project.version}'
+main: ru.makotomc.makotorandomitemevent.MakotoRandomItemEvent
+api-version: '1.20'
+commands:
+  revent:
