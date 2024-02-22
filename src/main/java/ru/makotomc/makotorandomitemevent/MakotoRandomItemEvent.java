@@ -19,6 +19,9 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public final class MakotoRandomItemEvent extends JavaPlugin implements Listener, CommandExecutor {
+    private static Location wbCenter;
+    private static double wbSize;
+
     public static Set<Player> participants = new HashSet<>();
     public static Set<Location> createCircle(Location center, int radius, int blockCount, Material material) {
         double angle = 2 * Math.PI / blockCount;
@@ -40,11 +43,11 @@ public final class MakotoRandomItemEvent extends JavaPlugin implements Listener,
     }
     public static void startEvent(Location loc){
         int playerCount = Bukkit.getOnlinePlayers().size();
-        Set<Location> locs = createCircle(loc, 2 * playerCount, playerCount, Material.OBSIDIAN);
+        Set<Location> locs = createCircle(loc, (int) (2.44 * playerCount), playerCount, Material.OBSIDIAN);
         int size = playerCount;
         while (size > 9) {
-            size -= 5;
-            createCircle(loc, size * 2, size * (size < 10 ? 4 : 2), Material.OBSIDIAN);
+            size -= 6;
+            createCircle(loc, (int) (size * 2.44), size * (size < 10 ? 4 : 2), Material.OBSIDIAN);
         }
         List<Player> players = new ArrayList<>(Bukkit.getOnlinePlayers());
         Collections.shuffle(players);
@@ -68,9 +71,11 @@ public final class MakotoRandomItemEvent extends JavaPlugin implements Listener,
             i++;
         }
         WorldBorder wb = loc.getWorld().getWorldBorder();
+        wbCenter = wb.getCenter();
+        wbSize = wb.getSize();
         wb.setCenter(loc.clone());
-        wb.setSize(playerCount * 4 >= 200 ? playerCount * 8 : 200);
-        wb.setSize(4, TimeUnit.MINUTES, 35);
+        wb.setSize(playerCount * 4 >= 200 ? playerCount * 6 : 200);
+        wb.setSize(4, TimeUnit.MINUTES, 30);
     }
 
 
@@ -91,8 +96,11 @@ public final class MakotoRandomItemEvent extends JavaPlugin implements Listener,
                                 Title.Times.times(Duration.ofSeconds(1), Duration.ofSeconds(10), Duration.ofSeconds(2))
                         )
                 );
-                participants.clear();
             }
+            participants.clear();
+            WorldBorder wb = wbCenter.getWorld().getWorldBorder();
+            wb.setCenter(wbCenter);
+            wb.setSize(wbSize);
         }
     }
     @EventHandler
@@ -115,16 +123,16 @@ public final class MakotoRandomItemEvent extends JavaPlugin implements Listener,
 
             for (Player player : participants) {
                 player.getInventory().addItem(getRandomItem());
-                player.setLevel(15);
+                player.setLevel(14);
             }
-        },14*20,14*20);
+        },13*20,13*20);
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
             if(participants.isEmpty())
                 return;
             for (Player player : participants) {
                 player.setLevel(player.getLevel()==0?0:player.getLevel()-1);
             }
-        },14*20,20);
+        },13*20,20);
     }
 
     @Override

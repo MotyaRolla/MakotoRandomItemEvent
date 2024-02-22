@@ -40,7 +40,7 @@ public class ReventCommand implements CommandExecutor {
                     onlinePlayer.showTitle(
                             Title.title(
                                     Component.text("Ивент начинается").color(TextColor.color(Color.PINK.getRGB())),
-                                    Component.text("Арена подготавливается!").color(TextColor.color(Color.gray.getRGB())),
+                                    Component.text("Арена генерируется!").color(TextColor.color(Color.gray.getRGB())),
                                     Title.Times.times(Duration.ofSeconds(1), Duration.ofSeconds(4), Duration.ofSeconds(1))
                             )
                     );
@@ -56,7 +56,7 @@ public class ReventCommand implements CommandExecutor {
                 participants.clear();
                 break;
             case "test":
-                createCircle(p.getLocation().clone(), Integer.parseInt(strings[1]),Integer.valueOf(strings[2]), Material.OBSIDIAN);
+                createCircle(p.getLocation().clone(), (int) (2.44 * Integer.parseInt(strings[1])), Integer.parseInt(strings[1]), Material.OBSIDIAN);
                 break;
         }
         return true;
