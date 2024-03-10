@@ -73,9 +73,11 @@ public class TeamManager implements Listener {
                     }
                     notInParty.removeAll(team);
                 }
+                if(!team.isEmpty())
+                    teams.add(new Team(team));
             }
             if(!notInParty.isEmpty()){
-                List<Player> team = new LinkedList<>();
+                List<Player>team = new LinkedList<>();
                 for (Player player : notInParty) {
                     team.add(player);
                     if(team.size()==GameMode.CURRENT_GAME_MODE.playerCount){

@@ -11,6 +11,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
+import ru.makotomc.makotorandomitemevent.Gamemodes.BasicGamemode;
+import ru.makotomc.makotorandomitemevent.Gamemodes.CrazyRandom;
 import ru.makotomc.makotorandomitemevent.Party.Party;
 import ru.makotomc.makotorandomitemevent.Party.PartyCommand;
 import ru.makotomc.makotorandomitemevent.Party.PartyManager;
@@ -28,7 +30,7 @@ public class ReventCommand implements CommandExecutor {
         if(!commandSender.isOp())
             return false;
         if(strings.length==0) {
-            commandSender.sendMessage("usage: /revent start/stop");
+            commandSender.sendMessage("usage: /revent start/stop/type");
             return true;
         }
         Player p = (Player) commandSender;
@@ -51,7 +53,7 @@ public class ReventCommand implements CommandExecutor {
                 }
                 TeamManager.teams.clear();
                 Bukkit.getScheduler().runTaskLater(MakotoRandomItemEvent.getInstance(), () -> {
-                    startEvent(p.getLocation().clone());
+                    gamemode.startEvent(p.getLocation());
                 },100);
                 break;
             case "type":
@@ -83,14 +85,38 @@ public class ReventCommand implements CommandExecutor {
                     p.sendMessage("Возможные типы игры: "+ Arrays.toString(GameMode.values()));
                 }
                 break;
+            case "gamemode":
+                if(strings.length==1){
+                    p.sendMessage("Текущая игра: "+gamemode.getName());
+                    return true;
+                }
+                switch (strings[1]){
+                    case "crazy":
+                        gamemode = new CrazyRandom();
+                        break;
+                    case "basic":
+                        gamemode = new BasicGamemode();
+                        break;
+                    default:
+                        p.sendMessage("Возможные типы игры: crazy/basic");
+                        return true;
+                }
+                for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                    onlinePlayer.showTitle(
+                            Title.title(
+                                    Component.text("Изменение ивента").color(TextColor.color(Color.PINK.getRGB())),
+                                    Component.text("Текущий режим: "+gamemode.getName()).color(TextColor.color(Color.gray.getRGB())),
+                                    Title.Times.times(Duration.ofSeconds(1), Duration.ofSeconds(7), Duration.ofSeconds(1))
+                            )
+                    );
+                }
+                break;
             case "stop":
-                MakotoRandomItemEvent.stopEvent("Ивент прерван");
+                gamemode.stopEvent("Ивент прерван");
                 break;
             case "test":
                 if(strings.length==1){
-                    p.getInventory().addItem(MakotoRandomItemEvent.getRandomItem());
-                }else {
-                    createCircle(p.getLocation().clone(), (int) (2.44 * Integer.parseInt(strings[1])), Integer.parseInt(strings[1]), Material.OBSIDIAN);
+                    p.getInventory().addItem(gamemode.getRandomItem());
                 }
                 break;
         }
